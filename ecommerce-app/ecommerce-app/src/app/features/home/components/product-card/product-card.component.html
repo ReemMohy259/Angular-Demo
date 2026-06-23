@@ -1,0 +1,26 @@
+<div class="card">
+  <img [src]="product.image" [alt]="product.name" class="card__img" />
+
+  <div class="card__body">
+    <span class="card__category">{{ product.category }}</span>
+    <h3 class="card__name">{{ product.name }}</h3>
+
+    <div class="card__price">
+      <span class="card__price-current">${{ product.price.toFixed(2) }}</span>
+      <span class="card__price-original">${{ product.originalPrice.toFixed(2) }}</span>
+      <span class="card__discount">-{{ product.discount }}%</span>
+    </div>
+  </div>
+
+  <div class="card__actions">
+    <a [routerLink]="['/product', product.id]" class="btn btn--outline">View Details</a>
+    <button
+      class="btn"
+      [class.btn--added]="isInCart"
+      (click)="onAddToCart()"
+      [disabled]="isInCart"
+    >
+      {{ isInCart ? 'In Cart' : 'Add to Cart' }}
+    </button>
+  </div>
+</div>

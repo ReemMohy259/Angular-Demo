@@ -1,0 +1,32 @@
+<div class="cart-item">
+  <img [src]="item.product.image" [alt]="item.product.name" class="cart-item__img" />
+
+  <div class="cart-item__info">
+    <span class="cart-item__category">{{ item.product.category }}</span>
+    <p class="cart-item__name">{{ item.product.name }}</p>
+    <div class="cart-item__unit">
+      ${{ item.product.price.toFixed(2) }}
+      <span class="cart-item__original">${{ item.product.originalPrice.toFixed(2) }}</span>
+    </div>
+  </div>
+
+  <div class="cart-item__qty">
+    <button (click)="decrement()">−</button>
+    <input
+      type="number"
+      [value]="item.quantity"
+      min="1"
+      (change)="onQuantityInput($event)"
+    />
+    <button (click)="increment()">+</button>
+  </div>
+
+  <div class="cart-item__subtotal">
+    <span class="cart-item__subtotal-label">Item total</span>
+    <span class="cart-item__subtotal-value">${{ itemTotal.toFixed(2) }}</span>
+    <span class="cart-item__subtotal-original">${{ itemTotalOriginal.toFixed(2) }}</span>
+    <span class="cart-item__subtotal-save">Save ${{ itemSavings.toFixed(2) }}</span>
+  </div>
+
+  <button class="cart-item__remove" (click)="onRemove()">Remove</button>
+</div>

@@ -1,0 +1,12 @@
+<nav class="navbar">
+  <a routerLink="/" class="navbar__brand">ShopApp</a>
+  <div class="navbar__links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/cart" routerLinkActive="active">
+      Cart
+      @if (cartCount > 0) {
+        <span class="badge">{{ cartCount }}</span>
+      }
+    </a>
+  </div>
+</nav>

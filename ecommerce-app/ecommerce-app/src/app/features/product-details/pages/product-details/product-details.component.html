@@ -1,0 +1,58 @@
+@if (product) {
+  <div class="details">
+
+    <a routerLink="/" class="details__back">← Back to Products</a>
+
+    <div class="details__layout">
+
+      <!-- Image -->
+      <div class="details__image-wrap">
+        <img [src]="product.image" [alt]="product.name" class="details__image" />
+      </div>
+
+      <!-- Info -->
+      <div class="details__info">
+        <span class="details__category">{{ product.category }}</span>
+        <h1 class="details__name">{{ product.name }}</h1>
+
+        <div class="details__rating">
+          ★ {{ product.rating }} / 5
+        </div>
+
+        <p class="details__description">{{ product.description }}</p>
+
+        <div class="details__pricing">
+          <span class="details__price">${{ product.price.toFixed(2) }}</span>
+          <span class="details__original">${{ product.originalPrice.toFixed(2) }}</span>
+          <span class="details__discount">-{{ product.discount }}% OFF</span>
+        </div>
+
+        <div class="details__savings">
+          You save: ${{ (product.originalPrice - product.price).toFixed(2) }}
+        </div>
+
+        <div class="details__stock">
+          In stock: {{ product.stock }} units
+        </div>
+
+        <div class="details__actions">
+          <button
+            class="btn"
+            [class.btn--added]="isInCart"
+            [disabled]="isInCart"
+            (click)="addToCart()"
+          >
+            {{ isInCart ? '✓ Added to Cart' : 'Add to Cart' }}
+          </button>
+          <a routerLink="/cart" class="btn btn--outline">View Cart</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+} @else {
+  <div class="not-found">
+    <p>Product not found.</p>
+    <a routerLink="/" class="btn">Back to Home</a>
+  </div>
+}

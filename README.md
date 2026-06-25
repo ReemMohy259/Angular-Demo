@@ -182,12 +182,15 @@ EXIT;
 spring.datasource.username=root
 spring.datasource.password=your_password_here
 
-# 3. Run
+# 3. Persist some data in the database
+open mysql and run data.sql script, found in backend/resources
+
+# 4. Run
 cd shopapp-backend
 ./mvnw spring-boot:run
 # → http://localhost:8080
 
-# 4. Seed data (first run only)
+# 5. Seed data (first run only)
 mysql -u root -p shopapp_db < src/main/resources/data.sql
 ```
 

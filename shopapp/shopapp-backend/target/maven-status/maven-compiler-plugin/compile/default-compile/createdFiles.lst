@@ -1,0 +1,15 @@
+com\shopapp\repository\CartItemRepository.class
+com\shopapp\service\ProductService.class
+com\shopapp\model\CartItem.class
+com\shopapp\config\CorsConfig.class
+com\shopapp\ShopAppApplication.class
+com\shopapp\controller\ProductController.class
+com\shopapp\service\CartService.class
+com\shopapp\model\CartItem$CartItemBuilder.class
+com\shopapp\controller\CartController$UpdateCartRequest.class
+com\shopapp\controller\CartController.class
+com\shopapp\model\Product$ProductBuilder.class
+com\shopapp\config\GlobalExceptionHandler.class
+com\shopapp\model\Product.class
+com\shopapp\repository\ProductRepository.class
+com\shopapp\controller\CartController$AddToCartRequest.class

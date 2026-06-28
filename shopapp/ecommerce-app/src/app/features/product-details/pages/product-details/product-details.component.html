@@ -1,0 +1,67 @@
+@if (product()) {
+  <div class="details">
+
+    <a routerLink="/" class="details__back">← Back to Products</a>
+
+    <div class="details__layout">
+
+      <div class="details__image-wrap">
+        <img
+          [src]="product()!.image"
+          [alt]="product()!.name"
+          class="details__image"
+          [attr.data-product-id]="product()!.id"
+          [attr.loading]="'lazy'"
+        />
+      </div>
+
+      <div class="details__info">
+        <span class="details__category">{{ product()!.category }}</span>
+        <h1 class="details__name">{{ product()!.name }}</h1>
+
+        <div class="details__rating">★ {{ product()!.rating }} / 5</div>
+
+        <p class="details__description">{{ product()!.description }}</p>
+
+        <!-- custom pipe: currencyFormat -->
+        <div class="details__pricing">
+          <span class="details__price">{{ product()!.price | currencyFormat }}</span>
+          <span class="details__original">{{ product()!.originalPrice | currencyFormat }}</span>
+          <span class="details__discount">-{{ product()!.discount }}% OFF</span>
+        </div>
+
+        <div class="details__savings">You save: {{ savings() | currencyFormat }}</div>
+
+        <!-- custom pipe: stockStatus + custom attribute directive: appStockBadge -->
+        <div
+          class="details__stock"
+          appStockBadge [stockValue]="product()!.stock"
+        >
+          {{ product()!.stock | stockStatus }}
+        </div>
+
+        <!-- custom structural directive: *appIfHasStock -->
+        <div *appIfHasStock="product()!.stock" class="details__actions">
+          <button
+            class="btn"
+            [class.btn--added]="isInCart()"
+            [disabled]="isInCart()"
+            (click)="addToCart()"
+          >
+            {{ isInCart() ? '✓ Added to Cart' : 'Add to Cart' }}
+          </button>
+          <a routerLink="/cart" class="btn btn--outline">View Cart</a>
+        </div>
+
+        @if (product()!.stock === 0) {
+          <p class="details__out-of-stock">Currently out of stock.</p>
+        }
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="not-found">
+    <p>Product not found.</p>
+    <a routerLink="/" class="btn">Back to Home</a>
+  </div>
+}

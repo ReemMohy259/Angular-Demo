@@ -1,0 +1,133 @@
+<!-- Delete confirm modal -->
+@if (showDeleteModal()) {
+  <app-confirm-modal
+    title="Delete Product"
+    [message]="'Delete \'' + product()!.name + '\'? This cannot be undone.'"
+    confirmLabel="Delete"
+    cancelLabel="Cancel"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+}
+
+@if (product()) {
+  <div class="detail">
+
+    <nav class="breadcrumb">
+      <a routerLink="/admin/products">Products</a>
+      <span>›</span>
+      <span>{{ product()!.name }}</span>
+    </nav>
+
+    <div class="detail__layout">
+
+      <div class="detail__image-col">
+        <div class="detail__image-wrap">
+          <img
+            [src]="product()!.image"
+            [alt]="product()!.name"
+            class="detail__image"
+            [attr.data-product-id]="product()!.id"
+            [attr.loading]="'lazy'"
+          />
+          <span class="detail__discount-badge">-{{ product()!.discount }}% OFF</span>
+        </div>
+
+        <div
+          class="detail__stock-pill"
+          [ngStyle]="{
+            background: product()!.stock === 0 ? '#fef2f2' : product()!.stock <= 5 ? '#fffbeb' : '#f0fdf4',
+            color:      product()!.stock === 0 ? '#dc2626' : product()!.stock <= 5 ? '#d97706' : '#16a34a',
+            border:     product()!.stock === 0 ? '1px solid #fecaca' : product()!.stock <= 5 ? '1px solid #fde68a' : '1px solid #bbf7d0'
+          }"
+          appStockBadge [stockValue]="product()!.stock"
+        >
+          {{ product()!.stock | stockStatus }}
+        </div>
+      </div>
+
+      <div class="detail__info">
+        <span class="detail__category">{{ product()!.category }}</span>
+        <h1 class="detail__name">{{ product()!.name }}</h1>
+
+        <div class="detail__rating" [ngClass]="ratingClass()">
+          ★ {{ product()!.rating }} / 5
+        </div>
+
+        <p class="detail__description">{{ product()!.description }}</p>
+
+        <div class="detail__pricing">
+          <span class="detail__price">{{ product()!.price | currencyFormat }}</span>
+          <span class="detail__original">{{ product()!.originalPrice | currencyFormat }}</span>
+        </div>
+
+        <div class="detail__savings">
+          You save: {{ savings() | currencyFormat }}
+        </div>
+
+        <div *appIfHasStock="product()!.stock" class="detail__add-cart">
+          <button
+            class="btn"
+            [class.btn--added]="isInCart()"
+            [disabled]="isInCart()"
+            (click)="addToCart()"
+          >
+            {{ isInCart() ? '✓ In Cart' : 'Add to Cart' }}
+          </button>
+        </div>
+
+        @if (product()!.stock === 0) {
+          <p class="detail__out-of-stock">This product is currently out of stock.</p>
+        }
+
+        <div class="detail__admin-actions">
+          <a [routerLink]="['/admin/products', product()!.id, 'edit']" class="btn btn--outline">Edit</a>
+          <button
+            class="btn btn--danger-ghost"
+            (click)="requestDelete()"
+            [disabled]="deleting()"
+          >
+            {{ deleting() ? 'Deleting…' : 'Delete' }}
+          </button>
+          <a routerLink="/admin/products" class="btn btn--ghost">← Back</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail__attrs">
+      <h3 class="detail__attrs-title">Product Details</h3>
+      <table class="attr-table">
+        <tbody>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">ID</td><td>{{ product()!.id }}</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Category</td><td>{{ product()!.category }}</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Price</td><td>{{ product()!.price | currencyFormat }}</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Original price</td><td>{{ product()!.originalPrice | currencyFormat }}</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Discount</td><td>{{ product()!.discount }}%</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Rating</td><td>{{ product()!.rating }} / 5</td>
+          </tr>
+          <tr appHighlight highlightColor="#f8faff">
+            <td class="attr-key">Stock</td>
+            <td appStockBadge [stockValue]="product()!.stock">{{ product()!.stock | stockStatus }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+} @else {
+  <div class="not-found">
+    <p>Product not found.</p>
+    <a routerLink="/admin/products" class="btn">Back to list</a>
+  </div>
+}

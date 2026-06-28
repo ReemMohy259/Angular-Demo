@@ -1,0 +1,251 @@
+<div class="form-page">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a routerLink="/admin/products">Products</a>
+    <span>›</span>
+    <span>{{ pageTitle() }}</span>
+  </nav>
+
+  <h1 class="form-page__title">{{ pageTitle() }}</h1>
+
+  <!-- Success banner -->
+  @if (saved()) {
+    <div class="alert alert--success">✓ Product saved! Redirecting…</div>
+  }
+
+  <!-- Cross-field error: sale price > original price -->
+  @if (form.errors?.['salePriceTooHigh'] && submitted()) {
+    <div class="alert alert--error">
+      Sale price (${{ form.get('price')?.value }}) cannot be higher than
+      original price (${{ form.get('originalPrice')?.value }}).
+    </div>
+  }
+
+  <!-- ── Reactive Form ──────────────────────────────────────────────────── -->
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+    <div class="pform">
+      <div class="pform__grid">
+
+        <!-- ── Name ───────────────────────────────────────────────────────── -->
+        <div class="pform__field pform__field--full">
+          <label class="pform__label" for="name">
+            Product Name <span class="req">*</span>
+          </label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('name')"
+            placeholder="e.g. Wireless Headphones"
+          />
+          @if (isInvalid('name')) {
+            <span class="pform__error">{{ errorFor('name') }}</span>
+          }
+        </div>
+
+        <!-- ── Category ───────────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="category">
+            Category <span class="req">*</span>
+          </label>
+          <select
+            id="category"
+            formControlName="category"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('category')"
+          >
+            <option value="">— Select —</option>
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+          @if (isInvalid('category')) {
+            <span class="pform__error">{{ errorFor('category') }}</span>
+          }
+        </div>
+
+        <!-- ── Rating ─────────────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="rating">Rating (0 – 5)</label>
+          <input
+            id="rating"
+            type="number"
+            formControlName="rating"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('rating')"
+            min="0" max="5" step="0.1"
+            [ngStyle]="{
+              borderColor: !isInvalid('rating')
+                ? ((f['rating'].value >= 4.5) ? '#16a34a'
+                   : (f['rating'].value >= 3)  ? '#d97706'
+                   : '#e5e5e5')
+                : '#dc2626'
+            }"
+          />
+          @if (isInvalid('rating')) {
+            <span class="pform__error">{{ errorFor('rating') }}</span>
+          }
+        </div>
+
+        <!-- ── Sale Price ──────────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="price">
+            Sale Price ($) <span class="req">*</span>
+          </label>
+          <input
+            id="price"
+            type="number"
+            formControlName="price"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('price') || !!form.errors?.['salePriceTooHigh']"
+            min="0" step="0.01"
+          />
+          @if (isInvalid('price')) {
+            <span class="pform__error">{{ errorFor('price') }}</span>
+          }
+        </div>
+
+        <!-- ── Original Price ─────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="originalPrice">Original Price ($)</label>
+          <input
+            id="originalPrice"
+            type="number"
+            formControlName="originalPrice"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('originalPrice')"
+            min="0" step="0.01"
+          />
+          @if (isInvalid('originalPrice')) {
+            <span class="pform__error">{{ errorFor('originalPrice') }}</span>
+          }
+        </div>
+
+        <!-- ── Discount ───────────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="discount">
+            Discount (%) <span class="pform__hint">auto-calculated</span>
+          </label>
+          <input
+            id="discount"
+            type="number"
+            formControlName="discount"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('discount')"
+            min="0" max="100"
+          />
+          @if (isInvalid('discount')) {
+            <span class="pform__error">{{ errorFor('discount') }}</span>
+          }
+        </div>
+
+        <!-- ── Stock ──────────────────────────────────────────────────────── -->
+        <div class="pform__field">
+          <label class="pform__label" for="stock">
+            Stock (units) <span class="req">*</span>
+          </label>
+          <input
+            id="stock"
+            type="number"
+            formControlName="stock"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('stock')"
+            min="0"
+          />
+          @if (isInvalid('stock')) {
+            <span class="pform__error">{{ errorFor('stock') }}</span>
+          }
+        </div>
+
+        <!-- ── Image URL ──────────────────────────────────────────────────── -->
+        <div class="pform__field pform__field--full">
+          <label class="pform__label" for="image">Image URL</label>
+          <input
+            id="image"
+            type="url"
+            formControlName="image"
+            class="pform__input"
+            [class.pform__input--error]="isInvalid('image')"
+            placeholder="https://…"
+          />
+          @if (isInvalid('image')) {
+            <span class="pform__error">{{ errorFor('image') }}</span>
+          }
+          <!-- Live image preview — attribute binding -->
+          @if (imagePreview() && !isInvalid('image')) {
+            <img
+              [src]="imagePreview()"
+              [alt]="f['name'].value || 'Preview'"
+              class="pform__img-preview"
+              [attr.data-preview]="'true'"
+            />
+          }
+        </div>
+
+        <!-- ── Description ────────────────────────────────────────────────── -->
+        <div class="pform__field pform__field--full">
+          <label class="pform__label" for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="pform__input pform__textarea"
+            rows="4"
+            placeholder="Describe the product…"
+          ></textarea>
+        </div>
+
+      </div><!-- /grid -->
+
+      <!-- ── Savings preview ──────────────────────────────────────────────── -->
+      @if (savingsPreview() > 0) {
+        <div class="pform__savings-preview">
+          Customer saves: {{ savingsPreview() | currencyFormat }}
+          ({{ f['discount'].value }}% off)
+        </div>
+      }
+
+      <!-- ── Form status indicator ─────────────────────────────────────────── -->
+      <div class="pform__status">
+        <span
+          class="status-dot"
+          [ngClass]="{
+            'status-dot--valid':   form.valid,
+            'status-dot--invalid': form.invalid && submitted(),
+            'status-dot--pristine': form.pristine
+          }"
+        ></span>
+        <span class="status-label">
+          @if (form.pristine && !submitted()) { Form not yet modified }
+          @else if (form.valid)               { All fields valid }
+          @else                               { {{ countErrors() }} field(s) need attention }
+        </span>
+      </div>
+
+      <!-- ── Actions ──────────────────────────────────────────────────────── -->
+      <div class="pform__actions">
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="saving()"
+          [attr.aria-busy]="saving()"
+        >
+          {{ submitLabel() }}
+        </button>
+        <a routerLink="/admin/products" class="btn btn--outline">Cancel</a>
+
+        @if (isEditMode()) {
+          <a
+            [routerLink]="['/admin/products', route.snapshot.data['product']?.id]"
+            class="btn btn--ghost"
+          >
+            View Product
+          </a>
+        }
+      </div>
+
+    </div><!-- /pform -->
+  </form>
+</div>

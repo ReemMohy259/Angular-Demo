@@ -1,0 +1,20 @@
+<!-- Resolver loading bar (bonus) — shown while router resolver is running -->
+@if (resolving()) {
+  <div class="nav-loader">
+    <div class="nav-loader__bar"></div>
+  </div>
+}
+
+<nav class="navbar">
+  <a routerLink="/" class="navbar__brand">ShopApp</a>
+  <div class="navbar__links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/admin/products" routerLinkActive="active">Admin</a>
+    <a routerLink="/cart" routerLinkActive="active" class="navbar__cart">
+      Cart
+      @if (cartService.cartCount() > 0) {
+        <span class="badge">{{ cartService.cartCount() }}</span>
+      }
+    </a>
+  </div>
+</nav>

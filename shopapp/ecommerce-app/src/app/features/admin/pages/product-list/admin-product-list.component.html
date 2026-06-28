@@ -1,0 +1,131 @@
+<div class="admin-list">
+
+  <!-- Delete confirm modal -->
+  @if (deleteTargetId() !== null) {
+    <app-confirm-modal
+      title="Delete Product"
+      [message]="'Are you sure you want to delete \'' + deleteTargetName() + '\'? This cannot be undone.'"
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()"
+    />
+  }
+
+  <!-- Page header -->
+  <div class="admin-list__header">
+    <div>
+      <h1 class="admin-list__title">Products</h1>
+      <span class="admin-list__count">{{ filtered().length }} of {{ productService.products().length }}</span>
+    </div>
+    <a routerLink="/admin/products/new" class="btn btn--primary">+ Add Product</a>
+  </div>
+
+  @if (deleteError()) {
+    <div class="alert alert--error">{{ deleteError() }}</div>
+  }
+
+  <!-- Search -->
+  <div class="admin-list__toolbar">
+    <input
+      class="search-input"
+      type="text"
+      [placeholder]="'Search ' + productService.products().length + ' products…'"
+      [value]="searchTerm()"
+      (input)="searchTerm.set($any($event.target).value)"
+      [attr.aria-label]="'Search products'"
+    />
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th
+            (click)="sort('name')"
+            [ngStyle]="{ color: sortField() === 'name' ? '#1a1a1a' : '#888', cursor:'pointer' }"
+          >Name {{ sortField() === 'name' ? (sortAsc() ? '↑' : '↓') : '' }}</th>
+
+          <th
+            (click)="sort('category')"
+            [ngStyle]="{ color: sortField() === 'category' ? '#1a1a1a' : '#888', cursor:'pointer' }"
+          >Category {{ sortField() === 'category' ? (sortAsc() ? '↑' : '↓') : '' }}</th>
+
+          <th
+            (click)="sort('price')"
+            [ngStyle]="{ color: sortField() === 'price' ? '#1a1a1a' : '#888', cursor:'pointer' }"
+          >Price {{ sortField() === 'price' ? (sortAsc() ? '↑' : '↓') : '' }}</th>
+
+          <th
+            (click)="sort('stock')"
+            [ngStyle]="{ color: sortField() === 'stock' ? '#1a1a1a' : '#888', cursor:'pointer' }"
+          >Stock {{ sortField() === 'stock' ? (sortAsc() ? '↑' : '↓') : '' }}</th>
+
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (product of filtered(); track product.id) {
+          <tr appHighlight highlightColor="#f8faff">
+
+            <td class="td-name">
+              <img
+                [src]="product.image"
+                [alt]="product.name"
+                class="row-img"
+                [attr.loading]="'lazy'"
+              />
+              <span [attr.title]="product.description">{{ product.name }}</span>
+            </td>
+
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'badge--audio':     product.category === 'Audio',
+                  'badge--periph':    product.category === 'Peripherals',
+                  'badge--monitor':   product.category === 'Monitors',
+                  'badge--furniture': product.category === 'Furniture',
+                  'badge--storage':   product.category === 'Storage',
+                  'badge--lighting':  product.category === 'Lighting',
+                  'badge--access':    product.category === 'Accessories'
+                }"
+              >{{ product.category }}</span>
+            </td>
+
+            <td>
+              {{ product.price | currencyFormat }}
+              <span class="td-original">{{ product.originalPrice | currencyFormat }}</span>
+            </td>
+
+            <td>
+              <span appStockBadge [stockValue]="product.stock">
+                {{ product.stock | stockStatus }}
+              </span>
+            </td>
+
+            <td class="td-actions">
+              <a [routerLink]="['/admin/products', product.id]"         class="btn btn--sm btn--outline">View</a>
+              <a [routerLink]="['/admin/products', product.id, 'edit']" class="btn btn--sm">Edit</a>
+              <button
+                class="btn btn--sm btn--danger-ghost"
+                (click)="requestDelete(product)"
+                [disabled]="deleting()"
+              >Delete</button>
+            </td>
+
+          </tr>
+        }
+
+        @if (filtered().length === 0) {
+          <tr>
+            <td colspan="5" class="td-empty">No products match your search.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

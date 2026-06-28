@@ -1,0 +1,17 @@
+<div class="product-list">
+  @if (productService.loading()) {
+    <div class="state-msg">Loading products…</div>
+  } @else if (productService.error()) {
+    <div class="state-msg state-msg--error">{{ productService.error() }}</div>
+  } @else {
+    <div class="product-list__grid">
+      @for (product of productService.products(); track product.id) {
+        <app-product-card
+          [product]="product"
+          [isInCart]="isInCart(product.id)"
+          (addToCart)="onAddToCart($event)"
+        />
+      }
+    </div>
+  }
+</div>
